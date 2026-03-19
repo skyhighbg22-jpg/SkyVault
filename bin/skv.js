@@ -14,6 +14,11 @@ import { registerFind } from '../src/commands/find.js';
 import { registerGenerate } from '../src/commands/generate.js';
 import { registerDoctor } from '../src/commands/doctor.js';
 import { registerVault } from '../src/commands/vault-cmd.js';
+import { registerHistory, registerRollback, registerRotate } from '../src/commands/history.js';
+import { registerBackup } from '../src/commands/backup.js';
+import { registerImport } from '../src/commands/import-cmd.js';
+import { registerExport } from '../src/commands/export-cmd.js';
+import { registerRun } from '../src/commands/run.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -45,5 +50,12 @@ registerFind(program);
 registerGenerate(program);
 registerDoctor(program);
 registerVault(program);
+registerHistory(program);
+registerRollback(program);
+registerRotate(program);
+registerBackup(program);
+registerImport(program);
+registerExport(program);
+registerRun(program);
 
 program.parse();
