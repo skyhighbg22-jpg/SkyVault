@@ -13,6 +13,7 @@ import { registerContext } from '../src/commands/context.js';
 import { registerFind } from '../src/commands/find.js';
 import { registerGenerate } from '../src/commands/generate.js';
 import { registerDoctor } from '../src/commands/doctor.js';
+import { registerVault } from '../src/commands/vault-cmd.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -43,5 +44,6 @@ registerContext(program);
 registerFind(program);
 registerGenerate(program);
 registerDoctor(program);
+registerVault(program);
 
 program.parse();
