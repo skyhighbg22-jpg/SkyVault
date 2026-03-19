@@ -1,228 +1,348 @@
 # SkyVault
 
-A local-first CLI secret manager built with Node.js. Store and manage secrets securely with AES-256-GCM encryption.
+<div align="center">
+
+A **local-first CLI secret manager** for developers. Store and manage secrets securely with AES-256-GCM encryption. No cloud, no accounts, no tracking.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
+
+</div>
+
+---
+
+## Features
+
+- 🔒 **Military-Grade Encryption** - AES-256-GCM with PBKDF2 key derivation
+- 🚀 **Local-First** - No cloud dependency, works offline forever
+- 🎯 **Developer-Focused** - Namespace/environment organization, import/export, env injection
+- ⚡ **Fast & Simple** - Easy to use CLI, works out of the box
+- 🛡️ **Secure by Default** - Secrets encrypted at rest, HMAC integrity checking, session auto-lock
+- 📦 **Versioning** - Track secret history and rollback changes
+
+---
 
 ## Installation
 
+### Option 1: Install from npm (Recommended)
+
 ```bash
-npm install
+npm install -g skyvault
 ```
+
+Then verify:
+```bash
+skv --help
+```
+
+### Option 2: Install from GitHub
+
+```bash
+# Install latest from main branch
+npm install -g github:YOUR_USERNAME/skyvault
+
+# Or install a specific release
+npm install -g github:YOUR_USERNAME/skyvault#v1.0.0
+```
+
+### Option 3: Install from Source
+
+```bash
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/skyvault.git
+cd skyvault
+
+# Install dependencies
+npm install
+
+# Install globally
+npm install -g .
+
+# Or run directly
+node bin/skv.js --help
+```
+
+### Option 4: Download Release
+
+1. Go to the [Releases page](https://github.com/YOUR_USERNAME/skyvault/releases)
+2. Download the latest `.tgz` file
+3. Install: `npm install -g /path/to/skyvault-1.0.0.tgz`
+
+---
 
 ## Quick Start
 
+### 1. Initialize Your Vault
+
 ```bash
-# Initialize the vault
-node bin/skv.js vault init
-
-# Add a secret
-node bin/skv.js add my-api-key --provider aws --type api
-
-# Retrieve a secret (masked by default)
-node bin/skv.js get my-api-key
-
-# Copy to clipboard
-node bin/skv.js get my-api-key --copy
-
-# List all secrets
-node bin/skv.js list
+skv vault init
 ```
 
-## Features Implemented
+You'll be prompted to create a master password. This encrypts your entire vault.
 
-### Day 1 - Core CLI
-- ✅ Project scaffolding with ES modules
-- ✅ Commander.js CLI framework
-- ✅ Core commands: add, get, list, remove, context, find, generate, doctor
-- ✅ Namespace and environment organization
-- ✅ Input validation
-- ✅ Terminal UI with chalk styling
-- ✅ Tabular output with cli-table3
+### 2. Add Secrets
 
-### Day 2 - Security & Encryption
-- ✅ **AES-256-GCM encryption** for all secret values
-- ✅ **PBKDF2 key derivation** (600,000 iterations, SHA-512)
-- ✅ **HMAC-SHA256 integrity checking**
-- ✅ **Session tokens** with 15-minute TTL
-- ✅ **Atomic file writes** (temp + rename pattern)
-- ✅ **Advisory file locking** (PID-based)
-- ✅ Vault lifecycle: init, unlock, lock, status, set-password
-- ✅ Clipboard auto-clear (configurable TTL)
-- ✅ Import/export (env, JSON formats)
-- ✅ Run command with environment variable injection
+```bash
+# Add a secret interactively
+skv add my-api-key
 
-## Commands
+# Add with metadata
+skv add github-token --provider github --type token --tags ci,automation
+
+# Generate a random secure password
+skv add db-password --generate --length 32
+```
+
+### 3. Retrieve Secrets
+
+```bash
+# View a secret (masked)
+skv get my-api-key
+
+# Reveal the secret
+skv get my-api-key --raw
+
+# Copy to clipboard (auto-clears after 30s)
+skv get my-api-key --copy
+```
+
+### 4. List & Search
+
+```bash
+# List all secrets
+skv list
+
+# Search for secrets
+skv find github
+
+# Filter by namespace/environment
+skv list --ns myapp --env production
+```
+
+---
+
+## All Commands
 
 ### Vault Management
-```bash
-skv vault init              # Initialize encrypted vault
-skv vault unlock            # Unlock vault (creates session)
-skv vault lock              # Lock vault (destroys session)
-skv vault status            # Show vault status
-skv vault set-password      # Change master password
-```
+
+| Command | Description |
+|---------|-------------|
+| `skv vault init` | Initialize encrypted vault |
+| `skv vault unlock` | Unlock vault (starts session) |
+| `skv vault lock` | Lock vault (ends session) |
+| `skv vault status` | Show vault status |
+| `skv vault set-password` | Change master password |
 
 ### Secret Operations
-```bash
-skv add <name> [options]    # Add a new secret
-  --provider <provider>     # Secret provider (aws, github, etc.)
-  --type <type>             # Secret type (api, password, token)
-  --expires <expiry>        # Expiry (90d, 6m, 1y, or ISO date)
-  --tags <tags>             # Comma-separated tags
-  --generate                # Generate random secret
-  --length <n>              # Generated secret length
 
-skv get <name> [options]    # Retrieve a secret
-  --raw                     # Show unmasked value
-  --copy                    # Copy to clipboard
-  --ttl <seconds>           # Clipboard clear timeout (default: 30)
+| Command | Description |
+|---------|-------------|
+| `skv add <name>` | Add a new secret |
+| `skv get <name>` | Retrieve a secret |
+| `skv list` | List all secrets |
+| `skv remove <name>` | Delete a secret |
+| `skv find <query>` | Search secrets |
+| `skv generate` | Generate random secret |
 
-skv list [options]          # List secrets
-  --ns <namespace>          # Filter by namespace
-  --env <environment>       # Filter by environment
-  --expired                 # Show only expired
-  --json                    # JSON output
+### Advanced Operations
 
-skv remove <name> [options] # Delete a secret
-  --force                   # Skip confirmation
-  --all                     # Remove all secrets in context
-
-skv find <query> [options]  # Search secrets
-  --regex                   # Use regex pattern
-
-skv generate [options]      # Generate random secret
-  --length <n>              # Secret length (default: 32)
-  --copy                    # Copy to clipboard
-```
+| Command | Description |
+|---------|-------------|
+| `skv history <name>` | View secret version history |
+| `skv rollback <name>` | Restore previous version |
+| `skv rotate <name>` | Rotate secret value |
+| `skv backup create` | Create vault backup |
+| `skv backup list` | List all backups |
+| `skv backup restore <name>` | Restore from backup |
+| `skv import <file>` | Import secrets (.env, JSON) |
+| `skv export [name]` | Export secrets |
+| `skv run -- <cmd>` | Run with secrets as env vars |
 
 ### Context Management
-```bash
-skv context create <ns> [env]     # Create namespace/environment
-skv context use <ns> [env]         # Switch context
-skv context list                    # Show all contexts
-skv context remove <ns> [env]       # Remove context
-```
 
-### Import/Export
-```bash
-skv import <file> [options] # Import secrets
-  --format <format>         # env, json
-  --dry-run                 # Preview only
-
-skv export [name] [options] # Export secrets
-  --format <format>         # env, json
-  --out <file>              # Output file
-  --all                     # Export all
-```
-
-### Environment Injection
-```bash
-skv run --use db-pass=DB_PASSWORD -- npm start
-skv run --all -- ./start.sh
-```
+| Command | Description |
+|---------|-------------|
+| `skv context create <ns> [env]` | Create namespace/environment |
+| `skv context use <ns> [env]` | Switch context |
+| `skv context list` | List all contexts |
+| `skv context remove <ns> [env]` | Remove context |
 
 ### Utilities
-```bash
-skv doctor                  # Environment health check
-skv generate                # Generate secure random secret
-```
 
-## Security Features
+| Command | Description |
+|---------|-------------|
+| `skv doctor` | Check environment health |
+| `skv help` | Show help |
 
-- **Encryption at Rest**: All secrets encrypted with AES-256-GCM
-- **Key Derivation**: PBKDF2 with 600,000 iterations
-- **Session Management**: 15-minute TTL with auto-lock
-- **Integrity**: HMAC-SHA256 verification on every load
-- **Atomic Writes**: Never leaves vault in partially-written state
-- **File Locking**: Prevents concurrent modification
-- **Clipboard Protection**: Auto-clears after timeout
+---
 
-## Architecture
+## Command Options
+
+### Global Options
 
 ```
-src/
-├── bin/skv.js              # CLI entry point
-├── commands/               # Command implementations
-│   ├── add.js
-│   ├── get.js
-│   ├── list.js
-│   ├── remove.js
-│   ├── context.js
-│   ├── find.js
-│   ├── generate.js
-│   ├── doctor.js
-│   ├── vault-cmd.js        # Vault lifecycle
-│   ├── import-cmd.js
-│   ├── export-cmd.js
-│   └── run.js
-├── core/                   # Core modules
-│   ├── vault.js            # Plaintext vault ops
-│   ├── encrypted-vault.js # Encrypted vault
-│   ├── crypto.js           # Encryption utilities
-│   ├── session.js          # Session management
-│   └── vault-manager.js    # Unified access layer
-└── ui/
-    └── output.js           # Terminal output
+--ns <namespace>     Target namespace (default: default)
+--env <environment>  Target environment (default: dev)
+--raw                Output unmasked secret value
+--copy               Copy to clipboard
+--json               JSON output
+-q, --quiet          Suppress non-essential output
+-v, --verbose       Show debug output
+--no-color           Disable colors
 ```
 
-## Storage Format
+### skv add Options
 
-Vault is stored at `~/.skyvault/vault.json`:
-
-```json
-{
-  "_header": {
-    "schema_version": 2,
-    "kdf": "pbkdf2",
-    "kdf_params": { "iterations": 600000, "hash": "sha512" },
-    "salt": "base64-salt",
-    "hmac": "base64-hmac",
-    "created": "2026-03-19T..."
-  },
-  "namespaces": {
-    "default": {
-      "dev": {
-        "secret-name": {
-          "ciphertext": "base64",
-          "iv": "base64",
-          "authTag": "base64",
-          "type": "api",
-          "provider": "aws",
-          "created": "...",
-          "updated": "..."
-        }
-      }
-    }
-  }
-}
+```
+--provider <name>     Secret provider (e.g., aws, github)
+--type <type>         Secret type (api, password, token, secret)
+--expires <expiry>    Expiry: 90d, 6m, 1y, or ISO date
+--tags <tags>         Comma-separated tags
+--generate            Generate random value
+--length <n>          Generated secret length (default: 32)
+--overwrite           Overwrite existing secret
 ```
 
-## Planned Features (Day 3+)
+### skv get Options
 
-- 🔲 Secret versioning and history (rollback)
-- 🔲 Secret rotation
-- 🔲 Fuzzy search with fuse.js
-- 🔲 Tab completion
-- 🔲 Shell integration (direnv)
-- 🔲 Health dashboard
-- 🔲 Secret analysis (entropy, breach check)
-- 🔲 Backup/restore
-- 🔲 Check expiry notifications
-- 🔲 Alias system
-- 🔲 Config file support
-- 🔲 Plugin system
-
-## Testing
-
-```bash
-npm test
 ```
+--ttl <seconds>       Clipboard auto-clear timeout (default: 30)
+--field <field>       Get specific field (value, provider, type, etc.)
+```
+
+---
+
+## Security Architecture
+
+### Encryption Stack
+
+| Layer | Algorithm | Details |
+|-------|----------|---------|
+| Key Derivation | PBKDF2-SHA512 | 600,000 iterations |
+| Encryption | AES-256-GCM | 12-byte random IV per secret |
+| Integrity | HMAC-SHA256 | Verified on every load |
+| Hashing | SHA-256 | Names anonymized in logs |
+
+### Session Security
+
+- **15-minute session TTL** (configurable)
+- **Session tokens** stored in `/tmp/skyvault-<uid>.session`
+- **Auto-clear clipboard** after configurable timeout
+- **Key never written to disk** - memory only
+
+### Threat Mitigation
+
+| Threat | Protection |
+|--------|------------|
+| Filesystem read | AES-256-GCM encryption |
+| Vault tampering | HMAC integrity verification |
+| Weak passwords | PBKDF2 high iteration count |
+| Clipboard theft | Auto-clear after timeout |
+| Shell history | Env injection, not arguments |
+
+---
+
+## File Structure
+
+```
+skyvault/
+├── bin/
+│   └── skv.js              # CLI entry point
+├── src/
+│   ├── commands/            # Command implementations (16 commands)
+│   ├── core/                # Core modules
+│   │   ├── vault.js        # Vault operations
+│   │   ├── encrypted-vault.js
+│   │   ├── crypto.js       # Encryption utilities
+│   │   └── session.js      # Session management
+│   ├── ui/
+│   │   └── output.js       # Terminal output
+│   └── utils/              # Utility functions
+├── tests/                   # Test files
+├── package.json
+├── README.md
+├── LICENSE
+└── .gitignore
+```
+
+---
+
+## Configuration
+
+### Vault Location
+
+Default: `~/.skyvault/`
+
+```
+~/.skyvault/
+├── vault.json         # Encrypted vault
+├── vault.json.lock    # Advisory lock
+├── vault.json.tmp     # Atomic write staging
+├── context           # Current namespace/environment
+├── backups/          # Vault backups
+└── audit.log         # Operation audit log
+```
+
+---
+
+## Requirements
+
+- **Node.js** >= 18.0.0
+- **npm** >= 8.0.0 (for installation)
+
+---
+
+## Troubleshooting
+
+### "skv: command not found"
+
+1. Make sure npm global bin is in your PATH
+2. Try: `npm config get prefix`
+3. Add to PATH if needed
+
+### "Vault integrity check failed"
+
+- Wrong master password
+- Corrupted vault file
+- Try restoring from backup: `skv backup restore <name>`
+
+### "Session expired"
+
+- Run `skv vault unlock` to start a new session
+
+### "Permission denied" on vault file
+
+- On Linux/Mac: `chmod 600 ~/.skyvault/vault.json`
+
+---
+
+## Contributing
+
+Contributions welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## License
 
-ISC
+This project is licensed under the MIT License - see [LICENSE](LICENSE) for details.
 
-## Status
+---
 
-✅ **Day 1 Complete**: Core CLI and commands
-✅ **Day 2 Complete**: Encryption, sessions, security features
-⏳ **Day 3**: Advanced features and polish
+## Roadmap
+
+- [x] Core CLI commands
+- [x] AES-256-GCM encryption
+- [x] Session management
+- [x] Secret versioning
+- [x] Backup/restore
+- [ ] Fuzzy search (fuse.js)
+- [ ] Tab completion
+- [ ] Secret sharing
+- [ ] Plugin system
+- [ ] TUI interface
+
+---
+
+<div align="center">
+
+**Built with 🔒 by developers, for developers**
+
+</div>

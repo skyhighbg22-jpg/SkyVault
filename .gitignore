@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Vault files (local vault should never be committed)
+# ~/.skyvault/vault.json
+# ~/.skyvault/vault.json.lock
+
+# Package manager lock files (optional - uncomment if you want to commit them)
+# package-lock.json
+# yarn.lock
+
+# Release builds
+release/
+*.tgz
+
+# Debug logs
+debug.log
