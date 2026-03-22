@@ -4,7 +4,7 @@
   "description": "Local-first CLI secret manager with AES-256-GCM encryption",
   "main": "bin/skv.js",
   "bin": {
-    "skv": "./bin/skv.js"
+    "skyvault": "bin/skv.js"
   },
   "scripts": {
     "test": "jest",
@@ -27,7 +27,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/skyhighbg22-jpg/SkyVault.git"
+    "url": "git+https://github.com/skyhighbg22-jpg/SkyVault.git"
   },
   "bugs": {
     "url": "https://github.com/skyhighbg22-jpg/SkyVault/issues"
