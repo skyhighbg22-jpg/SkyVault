@@ -2,7 +2,7 @@
   "name": "skyvault",
   "version": "1.0.0",
   "description": "Local-first CLI secret manager with AES-256-GCM encryption",
-  "main": "index.js",
+  "main": "bin/skv.js",
   "bin": {
     "skv": "./bin/skv.js"
   },

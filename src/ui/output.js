@@ -50,15 +50,15 @@ export function masked(value, style = 'stars') {
   if (!value || value.length === 0) {
     return '***';
   }
-  
+
   if (value.length <= 6) {
     return '***';
   }
-  
+
   const first = value.slice(0, 3);
   const last = value.slice(-3);
   const middle = '•'.repeat(Math.min(value.length - 6, 10));
-  
+
   if (colorsEnabled) {
     return chalk.dim(`${first}${middle}${last}`);
   }
@@ -70,7 +70,7 @@ export function scrambleMask(value) {
   if (!value || value.length === 0) {
     return '***';
   }
-  
+
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < value.length; i++) {
@@ -119,14 +119,86 @@ export function separator() {
   console.log('-'.repeat(60));
 }
 
-// Helpful error with suggestion
-export function notFoundError(name, suggestions = []) {
+// Helpful error with suggestions and context
+export function notFoundError(name, suggestions = [], context = {}) {
   error(`Secret '${name}' not found.`);
-  
+
   if (suggestions.length > 0) {
-    console.log('\nDid you mean:');
+    console.log('\n💡 Did you mean:');
     suggestions.forEach(s => console.log(`  • ${s}`));
   }
+
+  // Context-specific hints
+  if (context.missingSession) {
+    console.log('\n🔓 Hint: Run "skv vault unlock" first to access your secrets');
+  }
+
+  if (context.wrongNamespace) {
+    console.log(`\n📁 Current namespace: ${context.ns || 'default'}`);
+    console.log('   Use --ns <namespace> to specify a different namespace');
+  }
+
+  if (context.wrongEnv) {
+    console.log(`\n🌍 Current environment: ${context.env || 'dev'}`);
+    console.log('   Use --env <environment> to specify a different environment');
+  }
+
+  if (context.listCommand) {
+    console.log('\n📋 Run "skv list" to see all available secrets');
+  }
+}
+
+// Auth-related errors
+export function authError(message, context = {}) {
+  error(`Authentication failed: ${message}`);
+
+  if (context.locked) {
+    console.log('\n🔐 Your vault is locked');
+    console.log('   Run "skv vault unlock" to access your secrets');
+  }
+
+  if (context.wrongPassword) {
+    console.log('\n💡 Hint: Check your master password and try again');
+    console.log('   Use "skv vault set-password" to change your password');
+  }
+}
+
+// Validation errors with helpful hints
+export function validationError(field, message, hints = []) {
+  error(`Invalid ${field}: ${message}`);
+
+  if (hints.length > 0) {
+    console.log('\n💡 Tips:');
+    hints.forEach(h => console.log(`   • ${h}`));
+  }
+}
+
+// Vault errors
+export function vaultError(message, context = {}) {
+  error(`Vault error: ${message}`);
+
+  if (context.notInitialized) {
+    console.log('\n🚀 Getting started:');
+    console.log('   Run "skv vault init" to create your encrypted vault');
+  }
+
+  if (context.corrupted) {
+    console.log('\n🔧 Possible solutions:');
+    console.log('   • Try restoring from a backup: skv backup list');
+    console.log('   • Check vault file integrity manually');
+  }
+}
+
+// Command not found / typo suggestion
+export function commandError(input, suggestions = []) {
+  error(`Unknown command: ${input}`);
+
+  if (suggestions.length > 0) {
+    console.log('\n💡 Did you mean:');
+    suggestions.forEach(s => console.log(`   skv ${s}`));
+  }
+
+  console.log('\n📖 Run "skv --help" to see available commands');
 }
 
 // Format date
@@ -147,17 +219,17 @@ export function formatExpiry(expires) {
   if (!expires) {
     return colorsEnabled ? chalk.dim('-') : '-';
   }
-  
+
   const date = new Date(expires);
   const now = new Date();
   const daysUntil = Math.floor((date - now) / (1000 * 60 * 60 * 24));
-  
+
   if (daysUntil < 0) {
     return colorsEnabled ? chalk.red('EXPIRED') : 'EXPIRED';
   } else if (daysUntil < 7) {
     return colorsEnabled ? chalk.yellow(`${daysUntil}d`) : `${daysUntil}d`;
   }
-  
+
   return colorsEnabled ? chalk.green(formatDate(expires)) : formatDate(expires);
 }
 
