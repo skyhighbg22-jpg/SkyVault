@@ -27,12 +27,12 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/skyvault.git"
+    "url": "https://github.com/skyhighbg22-jpg/SkyVault.git"
   },
   "bugs": {
-    "url": "https://github.com/YOUR_USERNAME/skyvault/issues"
+    "url": "https://github.com/skyhighbg22-jpg/SkyVault/issues"
   },
-  "homepage": "https://github.com/YOUR_USERNAME/skyvault#readme",
+  "homepage": "https://github.com/skyhighbg22-jpg/SkyVault#readme",
   "engines": {
     "node": ">=18.0.0"
   },
