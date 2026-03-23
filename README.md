@@ -4,8 +4,9 @@
 
 A **local-first CLI secret manager** for developers. Store and manage secrets securely with AES-256-GCM encryption. No cloud, no accounts, no tracking.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: GPL v3.0](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
+[![npm Version](https://img.shields.io/badge/npm-%3E%3D8.0.0-blue)](https://npmjs.org/)
 
 </div>
 
@@ -19,6 +20,9 @@ A **local-first CLI secret manager** for developers. Store and manage secrets se
 - ⚡ **Fast & Simple** - Easy to use CLI, works out of the box
 - 🛡️ **Secure by Default** - Secrets encrypted at rest, HMAC integrity checking, session auto-lock
 - 📦 **Versioning** - Track secret history and rollback changes
+- 🔄 **Import/Export** - Migrate secrets between vaults with .env and JSON support
+- 🌐 **Cross-Platform** - Works on Windows, macOS, and Linux
+- 🔐 **Zero Knowledge** - Your secrets never leave your machine
 
 ---
 
@@ -121,6 +125,33 @@ skv list --ns myapp --env production
 
 ---
 
+## Use Cases
+
+### Development Workflow
+
+```bash
+# Run a script with secrets injected as environment variables
+skv run -- node scripts/deploy.js
+
+# Import secrets from a .env file
+skv import-env .env.production
+
+# Export secrets for backup or migration
+skv export --format json > backup.json
+```
+
+### Team Collaboration
+
+```bash
+# Create encrypted backup to share with team
+skv backup create --name team-vault-2024
+
+# Generate a secure random password
+skv generate api-token --length 64 --include-special
+```
+
+---
+
 ## All Commands
 
 ### Vault Management
@@ -209,6 +240,25 @@ skv list --ns myapp --env production
 --ttl <seconds>       Clipboard auto-clear timeout (default: 30)
 --field <field>       Get specific field (value, provider, type, etc.)
 ```
+
+---
+
+## Why SkyVault?
+
+| Feature | SkyVault | HashiCorp Vault | AWS Secrets Manager | 1Password CLI |
+|---------|----------|-----------------|---------------------|---------------|
+| **Local-first** | ✅ | ❌ | ❌ | ❌ |
+| **No cloud required** | ✅ | ⚠️ Optional | ❌ | ❌ |
+| **Free & Open Source** | ✅ GPLv3 | ⚠️ Enterprise | ❌ Paid | ❌ Paid |
+| **No account required** | ✅ | ❌ | ❌ | ❌ |
+| **Simple setup** | ✅ | ❌ | ❌ | ⚠️ |
+
+### Key Benefits
+
+- **Complete Privacy**: No telemetry, no accounts, no cloud dependency
+- **Zero Configuration**: Works out of the box with sensible defaults
+- **Developer Experience**: Clean CLI, shell completion, env injection
+- **Portable**: Export/import secrets, use anywhere
 
 ---
 
@@ -322,7 +372,11 @@ Contributions welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for detail
 
 ## License
 
-This project is licensed under the MIT License - see [LICENSE](LICENSE) for details.
+This project is licensed under the GNU General Public License v3.0 - see [LICENSE](LICENSE) for details.
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 ---
 
