@@ -387,7 +387,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 - [x] Session management
 - [x] Secret versioning
 - [x] Backup/restore
-- [ ] Fuzzy search (fuse.js)
+- [x] Fuzzy search (fuse.js)
 - [ ] Tab completion
 - [ ] Secret sharing
 - [ ] Plugin system
